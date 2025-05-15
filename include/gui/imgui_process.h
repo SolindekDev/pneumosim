@@ -25,6 +25,6 @@
 
 GLuint load_texture(const char* filename, int* out_width, int* out_height);
 void imgui_process_init(gui_window_t* window);
-void imgui_process(gui_window_t* window);
+pneumatic_valve_t* imgui_process(gui_window_t* window);
 
 #endif /* __PS_GUI_IMGUI_PROCESS_H */

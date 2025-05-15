@@ -3,8 +3,8 @@ CCPP = clang++
 
 OS := $(shell uname)
 ifeq ($(OS), Linux)
-	CFLAGS = -Wall -Wextra -O2 -I include -Wno-unused-parameter -Wno-unused-private-field -Icimgui/imgui -Icimgui -Icimgui/imgui/backends
-	LDFLAGS = imgui_bridge.cpp cimgui/cimgui.cpp cimgui/imgui/*.cpp cimgui/imgui/backends/imgui_impl_sdl2.cpp cimgui/imgui/backends/imgui_impl_opengl3.cpp -Lcimgui/cimgui.so -Icimgui/imgui -Icimgui -Icimgui/imgui/backends -lSDL2 -lSDL2_ttf -lSDL2_image -lm -lGL -lGLEW 
+	CFLAGS = -g -Wall -Wextra -O2 -I include -Wno-unused-parameter -Wno-unused-private-field -Icimgui/imgui -Icimgui -Icimgui/imgui/backends
+	LDFLAGS = -g imgui_bridge.cpp cimgui/cimgui.cpp cimgui/imgui/*.cpp cimgui/imgui/backends/imgui_impl_sdl2.cpp cimgui/imgui/backends/imgui_impl_opengl3.cpp -Lcimgui/cimgui.so -Icimgui/imgui -Icimgui -Icimgui/imgui/backends -lSDL2 -lSDL2_ttf -lSDL2_image -lm -lGL -lGLEW 
 else ifeq ($(OS), Darwin)
 	CFLAGS = -Wall -Wextra -O2 $(shell pkg-config sdl2 sdl2_image sdl2_ttf --cflags) -I include -Wno-unused-parameter -Wno-unused-private-field
 	LDFLAGS = $(shell pkg-config sdl2 sdl2_image sdl2_ttf --libs) -lm

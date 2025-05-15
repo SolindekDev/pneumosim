@@ -80,6 +80,9 @@ typedef struct __rgb_color_t {
 
 #define CONVERT_TO_SDL_RGB(cl) cl.r, cl.g, cl.b, cl.a
 
+typedef struct __pneumatic_valve_t pneumatic_valve_t;
+static pneumatic_valve_t* global_valve;
+
 gui_window_t* gui_window_create(const char* title, int width, int height);
 void gui_window_destroy(gui_window_t* window);
 int  gui_window_run(gui_window_t *window);

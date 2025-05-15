@@ -167,11 +167,11 @@ void gui_window_handle_events(gui_window_t* window, SDL_Event event)
 int
 gui_window_run(gui_window_t* window)
 {
-    pneumatic_valve_t* valve = create_pneumatic_valve(PNEUMATIC_2_POSITION_VALVE, PNEUMATIC_5_WAY_VALVE);
-    valve->current_position = 1;
-    set_combination_for_position_valve(valve, 1, 1);
-    set_combination_for_position_valve(valve, 2, 2);
-    set_controls_for_valve(valve, CONTROL_PUSH_BUTTON, CONTROL_NONE, false, true);
+    pneumatic_valve_t* valve = NULL;
+    // valve->current_position = 1;
+    // set_combination_for_position_valve(valve, 1, 1);
+    // set_combination_for_position_valve(valve, 2, 2);
+    // set_controls_for_valve(valve, CONTROL_PUSH_BUTTON, CONTROL_NONE, false, true);
     imgui_process_init(window);
     ImFont* font = ImFontAtlas_AddFontFromFileTTF(window->io->Fonts, "res/fonts/FiraCode-Regular.ttf", 18.0f, NULL, NULL);
     window->io->FontDefault = font;
@@ -190,16 +190,22 @@ gui_window_run(gui_window_t* window)
         SDL_RenderClear(window->renderer);
 
         gui_manager_update(window->manager, window->renderer); 
-        draw_pneumatic_valve(valve, window, VEC2(100, 100), 1);
+        printf("%p\n", global_valve);
+        if (valve != NULL)
+        {
+            draw_pneumatic_valve(valve, window, VEC2(100, 100), 1);
+        }
 
         ImGui_ImplSDL2_NewFrameBridge(window->window);
         igNewFrame();
-        igPushFont(font);
+        // igPushFont(font);
 
         igBegin("Tools and settings | Pneumosim", NULL, 0);
-        imgui_process(window);
+        pneumatic_valve_t* pnn = imgui_process(window);
+        if (pnn != NULL)
+            valve = pnn;
 
-        igPopFont();
+        // igPopFont();
         igEnd();
         igRender();
         ImGui_ImplSDL2_RenderBridge(igGetDrawData());

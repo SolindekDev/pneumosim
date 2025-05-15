@@ -29,18 +29,145 @@
 
 #include <gui/window.h>
 
-GLuint texture1, texture2, texture3, texture4;
-int w, h;
+typedef struct __element_menu_t {
+    ImTextureID texture_id;
+    char* path;
+    int   id;
+    int   positions; 
+    int   ports;
+    VALVE_CONTROL left, right;
+    int first_combination, second_combination, third_combination;
+} element_menu_t;
 
 #define IM_COL32(r, g, b, a) (((ImU32)(a) << 24) | ((ImU32)(b) << 16) | ((ImU32)(g) << 8) | (ImU32)(r))
 
+#define ELEMENT_TEXTURE_WIDTH   573
+#define ELEMENT_TEXTURE_HEIGHT  235
+
+int w, h;
+
+element_menu_t elements_valve[] = {
+    { 
+        .path="res/valve/valve_miniatures/2_2-way-valve-button.png",    
+        .id= 1, 
+        .positions=2, 
+        .ports=2, 
+        .left=CONTROL_PUSH_BUTTON, 
+        .right=CONTROL_SPRING,
+        .first_combination=1,
+        .second_combination=2,
+        .third_combination=0 
+    },
+    { 
+        .path="res/valve/valve_miniatures/2_2-way-valve-pneumatic.png", 
+        .id= 2, 
+        .positions=2, 
+        .ports=2, 
+        .left=CONTROL_PNEUMATIC_CONTROL, 
+        .right=CONTROL_SPRING,
+        .first_combination=1,
+        .second_combination=2,
+        .third_combination=0 
+    },
+    { 
+        .path="res/valve/valve_miniatures/3_2-way-valve-button.png",    
+        .id= 3, 
+        .positions=2, 
+        .ports=3, 
+        .left=CONTROL_PUSH_BUTTON, 
+        .right=CONTROL_SPRING,
+        .first_combination=2,
+        .second_combination=1,
+        .third_combination=0 
+    },
+    { 
+        .path="res/valve/valve_miniatures/3_2-way-valve-pneumatic.png", 
+        .id= 4, 
+        .positions=2, 
+        .ports=3, 
+        .left=CONTROL_PNEUMATIC_CONTROL, 
+        .right=CONTROL_SPRING,
+        .first_combination=2,
+        .second_combination=1,
+        .third_combination=0 
+    },
+    { 
+        .path="res/valve/valve_miniatures/3_3-way-valve-button.png",    
+        .id= 5, 
+        .positions=3, 
+        .ports=3, 
+        .left=CONTROL_PUSH_BUTTON, 
+        .right=CONTROL_PUSH_BUTTON,
+        .first_combination=2,
+        .second_combination=3,
+        .third_combination=1 
+    },
+    { 
+        .path="res/valve/valve_miniatures/3_3-way-valve-pneumatic.png", 
+        .id= 6, 
+        .positions=3, 
+        .ports=3, 
+        .left=CONTROL_PNEUMATIC_CONTROL, 
+        .right=CONTROL_PNEUMATIC_CONTROL,
+        .first_combination=2,
+        .second_combination=3,
+        .third_combination=1 
+    },
+    { 
+        .path="res/valve/valve_miniatures/5_2-way-valve-button.png",    
+        .id= 7, 
+        .positions=2, 
+        .ports=5, 
+        .left=CONTROL_PUSH_BUTTON, 
+        .right=CONTROL_SPRING,
+        .first_combination=2,
+        .second_combination=1,
+        .third_combination=0 
+    },
+    { 
+        .path="res/valve/valve_miniatures/5_2-way-valve-pneumatic.png", 
+        .id= 8, 
+        .positions=2, 
+        .ports=5, 
+        .left=CONTROL_PNEUMATIC_CONTROL, 
+        .right=CONTROL_SPRING,
+        .first_combination=2,
+        .second_combination=1,
+        .third_combination=0 
+    },
+    { 
+        .path="res/valve/valve_miniatures/5_3-way-valve-button.png",    
+        .id= 9, 
+        .positions=3, 
+        .ports=5, 
+        .left=CONTROL_PUSH_BUTTON, 
+        .right=CONTROL_PUSH_BUTTON,
+        .first_combination=2,
+        .second_combination=3,
+        .third_combination=1 
+    },
+    { 
+        .path="res/valve/valve_miniatures/5_3-way-valve-pneumatic.png", 
+        .id=10, 
+        .positions=3, 
+        .ports=5, 
+        .left=CONTROL_PNEUMATIC_CONTROL, 
+        .right=CONTROL_PNEUMATIC_CONTROL,
+        .first_combination=2,
+        .second_combination=3,
+        .third_combination=1 
+    },
+};
+
+#define ELEMENTS_VALVE_SIZE (int)(sizeof(elements_valve) / sizeof(element_menu_t))
+
 void imgui_process_init(gui_window_t* window)
 {
-    GLuint tex = load_texture("res/valve/valve_combinations/2/combination-1.png", &w, &h);
-    texture1 = (ImTextureID)(intptr_t)tex;
-    texture2 = (ImTextureID)(intptr_t)tex;
-    texture3 = (ImTextureID)(intptr_t)tex;
-    texture4 = (ImTextureID)(intptr_t)tex;
+    for (int i = 0; i < ELEMENTS_VALVE_SIZE; i++)
+    {
+        GLuint tex = load_texture(elements_valve[i].path, &w, &h);
+        elements_valve[i].texture_id = tex;
+    }
 }
 
 GLuint load_texture(const char* filename, int* out_width, int* out_height) {
@@ -63,15 +190,13 @@ GLuint load_texture(const char* filename, int* out_width, int* out_height) {
     return tex;
 }
 
-void imgui_process(gui_window_t* window)
+pneumatic_valve_t* imgui_process(gui_window_t* window)
 {
+    pneumatic_valve_t* global_valve = NULL;
+
     if (igBeginTabBar("TabBar", 0)) {
         if (igBeginTabItem("About", NULL, 0)) {
             igText("Valve preview:");
-            ImVec2 uv0 = (ImVec2){0.0f, 0.0f};
-            ImVec2 uv1 = (ImVec2){1.0f, 1.0f};
-            ImVec2 image_size = (ImVec2){(float)w, (float)h};
-            igImage(texture1, image_size, uv0, uv1);
             igEndTabItem();
         }
         if (igBeginTabItem("Elements", NULL, 0)) {
@@ -79,42 +204,42 @@ void imgui_process(gui_window_t* window)
                 igText("air supply, some other shit");
             }
             if (igCollapsingHeader_TreeNodeFlags("Valves", 0)) {
-                const int numColumns = 6; // Number of columns in the grid
-                const int numRows = 2;    // Number of rows in the grid
-                ImVec2 imageSize = (ImVec2){81, 81}; // Set size of each image (optional)
-                igColumns(numColumns, NULL, false); // Create a grid with numColumns columns
+                ImVec2 imageSize = (ImVec2){(w / 2) * (igGetWindowWidth()/1000), (h / 2) * (igGetWindowHeight()/1000)};
+                igColumns(3, NULL, false);
 
-                for (int i = 0; i < numRows * numColumns; ++i)
+                for (int i = 0; i < ELEMENTS_VALVE_SIZE; ++i)
                 {
-                    // GLuint texture = texture1;
-                    // ImVec2 uv0 = (ImVec2){0.0f, 0.0f};
-                    // ImVec2 uv1 = (ImVec2){1.0f, 1.0f};
-                    // igImage(texture, imageSize, uv0, uv1);
+                    if (i > ELEMENTS_VALVE_SIZE)
+                        break;
 
-                    // // if ((i + 1) % numColumns != 0)
-                    // //     igSameLine(0.0f, 10.0f); 
-                    // igNextColumn();
-                    GLuint texture = texture1; // Replace with different textures if needed
+                    GLuint texture = elements_valve[i].texture_id;
                     ImVec2 uv0 = (ImVec2){0.0f, 0.0f};
                     ImVec2 uv1 = (ImVec2){1.0f, 1.0f};
-                    ImVec4 bg_col = (ImVec4){0, 0, 0, 0};  // Transparent background
-                    ImVec4 tint_col = (ImVec4){1, 1, 1, 1}; // No tint (normal color)
+                    ImVec4 bg_col = (ImVec4){0, 0, 0, 0}; 
+                    ImVec4 tint_col = (ImVec4){1, 1, 1, 1}; 
 
-                    // Cast texture to ImTextureID safely
                     ImTextureID tex_id = (ImTextureID)(intptr_t)texture;
 
-                    // Unique ID required if using the same texture multiple times
                     char btn_id[32];
-                    snprintf(btn_id, sizeof(btn_id), "##imgbtn_%d", i); // Invisible label
+                    snprintf(btn_id, sizeof(btn_id), "##imgbtn_%d", i);
 
                     if (igImageButton(btn_id, tex_id, imageSize, uv0, uv1, bg_col, tint_col)) {
-                        // Handle click on this image
-                        printf("Image button %d clicked!\n", i);
+                            global_valve = create_pneumatic_valve(elements_valve[i].positions, elements_valve[i].ports);
+                            if (elements_valve[i].positions == 3)
+                                global_valve->current_position = 2;
+                            else
+                                global_valve->current_position = 1;
+                            set_combination_for_position_valve(global_valve, 1, elements_valve[i].first_combination);
+                            set_combination_for_position_valve(global_valve, 2, elements_valve[i].second_combination);
+                            set_combination_for_position_valve(global_valve, 3, elements_valve[i].third_combination);
+                            set_controls_for_valve(global_valve, elements_valve[i].left, elements_valve[i].right, 
+                                elements_valve[i].left == CONTROL_SPRING ? true : false, 
+                                elements_valve[i].right == CONTROL_SPRING ? true : false); 
                     }
 
-                    igNextColumn(); // Move to the next column
+                    igNextColumn(); 
                 }
-                igColumns(1, NULL, false); // Reset columns to default
+                igColumns(1, NULL, false); 
             }
             if (igCollapsingHeader_TreeNodeFlags("Actuators", 0)) {
                 igText("with external return, with spring return");
@@ -141,4 +266,6 @@ void imgui_process(gui_window_t* window)
     }
 
     // igText("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / window->io->Framerate, window->io->Framerate);
+
+    return global_valve;
 }
