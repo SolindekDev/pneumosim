@@ -38,6 +38,8 @@ typedef struct __gui_component_t {
     bool is_highlighted;
     bool is_pressed;
 
+    gui_window_t* window;
+
     /* TODO */
     void (*on_mouse_enter)(struct __gui_component_t* component);
     void (*on_mouse_leave)(struct __gui_component_t* component);
@@ -49,7 +51,7 @@ typedef struct __gui_component_t {
     void (*on_event)(struct __gui_component_t* component, SDL_Event* event);
 } gui_component_t;
 
-gui_component_t* gui_component_create(const char* name, int id, int width, int height, int x, int y);
+gui_component_t* gui_component_create(const char* name, int id, int width, int height, int x, int y, window_t* window);
 void gui_component_destroy(gui_component_t* component);
 
 #endif /* __PS_GUI_COMPONENT_H */

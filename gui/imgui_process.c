@@ -204,7 +204,8 @@ pneumatic_valve_t* imgui_process(gui_window_t* window)
                 igText("air supply, some other shit");
             }
             if (igCollapsingHeader_TreeNodeFlags("Valves", 0)) {
-                ImVec2 imageSize = (ImVec2){(w / 2) * (igGetWindowWidth()/1000), (h / 2) * (igGetWindowHeight()/1000)};
+                // ImVec2 imageSize = (ImVec2){(w / 2) * (igGetWindowWidth()/1000), (h / 2) * (igGetWindowHeight()/1000)};
+                ImVec2 imageSize = (ImVec2){w/4, h/4};
                 igColumns(3, NULL, false);
 
                 for (int i = 0; i < ELEMENTS_VALVE_SIZE; ++i)
@@ -224,17 +225,17 @@ pneumatic_valve_t* imgui_process(gui_window_t* window)
                     snprintf(btn_id, sizeof(btn_id), "##imgbtn_%d", i);
 
                     if (igImageButton(btn_id, tex_id, imageSize, uv0, uv1, bg_col, tint_col)) {
-                            global_valve = create_pneumatic_valve(elements_valve[i].positions, elements_valve[i].ports);
-                            if (elements_valve[i].positions == 3)
-                                global_valve->current_position = 2;
-                            else
-                                global_valve->current_position = 1;
-                            set_combination_for_position_valve(global_valve, 1, elements_valve[i].first_combination);
-                            set_combination_for_position_valve(global_valve, 2, elements_valve[i].second_combination);
-                            set_combination_for_position_valve(global_valve, 3, elements_valve[i].third_combination);
-                            set_controls_for_valve(global_valve, elements_valve[i].left, elements_valve[i].right, 
-                                elements_valve[i].left == CONTROL_SPRING ? true : false, 
-                                elements_valve[i].right == CONTROL_SPRING ? true : false); 
+                        global_valve = create_pneumatic_valve(elements_valve[i].positions, elements_valve[i].ports);
+                        if (elements_valve[i].positions == 3)
+                            global_valve->current_position = 2;
+                        else
+                            global_valve->current_position = 1;
+                        set_combination_for_position_valve(global_valve, 1, elements_valve[i].first_combination);
+                        set_combination_for_position_valve(global_valve, 2, elements_valve[i].second_combination);
+                        set_combination_for_position_valve(global_valve, 3, elements_valve[i].third_combination);
+                        set_controls_for_valve(global_valve, elements_valve[i].left, elements_valve[i].right, 
+                            elements_valve[i].left == CONTROL_SPRING ? true : false, 
+                            elements_valve[i].right == CONTROL_SPRING ? true : false); 
                     }
 
                     igNextColumn(); 

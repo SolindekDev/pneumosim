@@ -16,28 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <SDL2/SDL_events.h>
+#include <components/workspace.h>
+
 #include <core/libs.h>
 #include <gui/window.h>
 #include <gui/component.h>
 
-gui_component_t* 
-gui_component_create(const char* name, int id, int width, int height, int x, int y, window_t* window)
+void gui_component_workspace_update(gui_component_t* component, SDL_Renderer* renderer)
 {
-    gui_component_t* component = calloc(1, sizeof(gui_component_t));
-
-    component->name = name;
-    component->id = id;
-    component->width = width;
-    component->height = height;
-    component->x = x;
-    component->y = y;
-    component->window = window;
-
-    return component;
+    
 }
 
-void 
-gui_component_destroy(gui_component_t* component)
+void gui_component_workspace_event(gui_component_t* component, SDL_Event* event)
 {
-    free(component);
+
+}
+
+gui_component_t* gui_component_workspace_create(gui_window_t* window)
+{
+    int x_size = gui_window_get_size_x(window);
+    int y_size = gui_window_get_size_y(window);
+
+    // -1 on the size means this component will be full the size of a full window.
+    gui_component_t* sidebar_component = gui_component_create("WORKSPACE", 1, -1, -1, 0, 0);
+    sidebar_component->on_event = &gui_component_sidebar_event;
+    sidebar_component->on_update = &gui_component_sidebar_update;
+    return sidebar_component;
 }

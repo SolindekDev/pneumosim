@@ -58,7 +58,6 @@ gui_component_t* gui_component_sidebar_create(gui_window_t* window)
 
     gui_component_t* sidebar_component = gui_component_create("SIDEBAR", 0, x_size / 3.25, y_size, 0, 0);
     sidebar_component->on_event = &gui_component_sidebar_event;
-    printf("%p\n", sidebar_component->on_event);
     sidebar_component->on_update = &gui_component_sidebar_update;
     return sidebar_component;
 }

@@ -22,6 +22,7 @@
 #include <core/libs.h>
 
 typedef struct __gui_manager_t gui_manager_t;
+typedef struct __gui_workspace_t gui_workspace_t;
  
 /* 
  * Define the structure for the GUI window. This structure will be used to
@@ -57,6 +58,7 @@ typedef struct __gui_window_t {
     } window_state;
 
     gui_manager_t* manager;
+    gui_workspace_t* workspace;
 
     /* Function prototypes */
     void (*on_update)(struct __gui_window_t* window);

@@ -164,14 +164,25 @@ void gui_window_handle_events(gui_window_t* window, SDL_Event event)
     gui_manager_handle_events(window->manager, &event);
 }
 
+void
+imgui_rendering_process(gui_window_t* window)
+{
+    ImGui_ImplSDL2_NewFrameBridge(window->window);
+    igNewFrame();
+    igBegin("Tools and settings | Pneumosim", NULL, 0);
+    imgui_process(window);
+    igEnd();
+    igRender();
+    ImGui_ImplSDL2_RenderBridge(igGetDrawData());
+    if (window->io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        igUpdatePlatformWindows();
+        igRenderPlatformWindowsDefault(NULL, NULL);
+    }
+}
+
 int
 gui_window_run(gui_window_t* window)
 {
-    pneumatic_valve_t* valve = NULL;
-    // valve->current_position = 1;
-    // set_combination_for_position_valve(valve, 1, 1);
-    // set_combination_for_position_valve(valve, 2, 2);
-    // set_controls_for_valve(valve, CONTROL_PUSH_BUTTON, CONTROL_NONE, false, true);
     imgui_process_init(window);
     ImFont* font = ImFontAtlas_AddFontFromFileTTF(window->io->Fonts, "res/fonts/FiraCode-Regular.ttf", 18.0f, NULL, NULL);
     window->io->FontDefault = font;
@@ -190,29 +201,8 @@ gui_window_run(gui_window_t* window)
         SDL_RenderClear(window->renderer);
 
         gui_manager_update(window->manager, window->renderer); 
-        printf("%p\n", global_valve);
-        if (valve != NULL)
-        {
-            draw_pneumatic_valve(valve, window, VEC2(100, 100), 1);
-        }
 
-        ImGui_ImplSDL2_NewFrameBridge(window->window);
-        igNewFrame();
-        // igPushFont(font);
-
-        igBegin("Tools and settings | Pneumosim", NULL, 0);
-        pneumatic_valve_t* pnn = imgui_process(window);
-        if (pnn != NULL)
-            valve = pnn;
-
-        // igPopFont();
-        igEnd();
-        igRender();
-        ImGui_ImplSDL2_RenderBridge(igGetDrawData());
-        if (window->io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            igUpdatePlatformWindows();
-            igRenderPlatformWindowsDefault(NULL, NULL);
-        }
+        imgui_rendering_process();
 
         SDL_RenderPresent(window->renderer);
     }

@@ -16,28 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef __PS_GUI_COMPONENT_WORKSPACE_H
+#define __PS_GUI_COMPONENT_WORKSPACE_H
+
 #include <core/libs.h>
 #include <gui/window.h>
 #include <gui/component.h>
 
-gui_component_t* 
-gui_component_create(const char* name, int id, int width, int height, int x, int y, window_t* window)
-{
-    gui_component_t* component = calloc(1, sizeof(gui_component_t));
+typedef struct __gui_workspace_t* {
+    pneumatic_elem
+} gui_workspace_t;
 
-    component->name = name;
-    component->id = id;
-    component->width = width;
-    component->height = height;
-    component->x = x;
-    component->y = y;
-    component->window = window;
+gui_component_t* gui_component_workspace_create(gui_window_t* window);
 
-    return component;
-}
-
-void 
-gui_component_destroy(gui_component_t* component)
-{
-    free(component);
-}
+#endif /* __PS_GUI_COMPONENT_WORKSPACE_H */
